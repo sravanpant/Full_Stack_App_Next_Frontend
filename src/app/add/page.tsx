@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-
-import { number, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -17,7 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
+import Currency from "@/components/Currency";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -41,7 +42,7 @@ const createMenu = async (data: any) => {
   return res.json();
 };
 
-type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>;
 
 const Page = () => {
   const router = useRouter();
@@ -105,8 +106,17 @@ const Page = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Price</FormLabel>
-              <FormControl>
-                <Input type="number" required placeholder="$ 5" {...field} />
+              <FormControl className="flex flex-row space-x-3">
+                <div className="border bg-white rounded-md">
+                  <Currency />
+                  <Input
+                    type="number"
+                    className="border-none"
+                    required
+                    placeholder="5"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
