@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="bg-[#f9f9f9] max-w-[70%] h-[900px] mx-auto p-5 my-3 border rounded-lg shadow-md">
+        <div className="bg-[#f9f9f9] md:max-w-[50%] lg:max-w-[30%]  h-[900px] mx-auto p-5 my-3 border rounded-lg shadow-md">
           {children}
         </div>
       </body>

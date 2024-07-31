@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
 import Currency from "@/components/Currency";
 
@@ -24,9 +23,17 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
 });
 
-const createMenu = async (data: any) => {
-  const res = await fetch("http://127.0.0.1:8000/api/menu/", {
-    method: "POST",
+async function fetchMenu(id: number) {
+  const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch menu");
+  }
+  return res.json();
+}
+
+async function updateMenu(id: number, data: any) {
+  const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
@@ -34,52 +41,62 @@ const createMenu = async (data: any) => {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to create menu");
+    throw new Error("Failed to update menu");
   }
-
   return res.json();
+}
+
+type UpdateProps = {
+  params: {
+    menuId: number;
+  };
 };
+type FormData = z.infer<typeof formSchema>;
 
-export type FormDataType = z.infer<typeof formSchema>;
-
-const Page = () => {
+const Update = ({ params }: UpdateProps) => {
   const router = useRouter();
-  const [formData, setFormData] = useState<FormDataType>({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     price: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const onFinish = (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    updateMenu(params.menuId, formData)
+      .then(() => {
+        router.replace("/?action=update");
+      })
+      .catch(() => {
+        setError("An error has occurred");
+        setLoading(false);
+      });
+  };
 
-  const form = useForm<FormDataType>({
+  useEffect(() => {
+    return () => setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchMenu(params.menuId);
+        setFormData({ name: data.name, price: data.price });
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+    fetchData();
+  }, [params.menuId]);
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       price: 0,
     },
   });
-
-  function onSubmit(values: FormDataType) {
-    setLoading(true);
-    setFormData({ name: values.name, price: Number(values.price) });
-    createMenu(formData)
-      .then(() => {
-        router.replace("/?action=create");
-      })
-      .catch(() => {
-        setError("An error has occurred");
-        setLoading(false);
-      });
-  }
-
-  const onFinish = (e: FormEvent) => {
-    e.preventDefault();
-    form.handleSubmit(onSubmit)(e);
-  };
-
-  useEffect(() => {
-    return () => setLoading(false);
-  }, []);
 
   return (
     <Form {...form}>
@@ -145,4 +162,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Update;

@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useReducer, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MenuItem, { MenuItemProps } from "@/components/MenuItem";
 import Image from "next/image";
 import loadingGif from "/public/__Iphone-spinner-1.gif";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 
 const deleteMenu = async (id: number) => {
-  const res = await fetch(`http://127.0.0.1:8000/api/menus/${id}/`, {
+  const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`, {
     method: "DELETE",
   });
   if (!res.ok) {
@@ -18,7 +19,7 @@ const deleteMenu = async (id: number) => {
 };
 
 const getData = async () => {
-  const res = await fetch("http://127.0.0.1:8000/api/menus/");
+  const res = await fetch("http://127.0.0.1:8000/api/menu/");
   if (!res.ok) {
     throw new Error("Failed to retrieve menu");
   }
@@ -83,7 +84,11 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="">
+      <span className="flex items-center justify-center py-3 text-center font-bold text-4xl ">
+        Menu
+      </span>
+
       <Button
         className="bg-[#008000] hover:bg-[#00b100] text-white"
         onClick={() => router.push("/add")}
@@ -95,26 +100,30 @@ export default function Home() {
           {displaySuccess.type === "add" ? "Added a" : "Modified a"} menu item.
         </p>
       )}
-      {menuItems ? (
-        menuItems.map((item: MenuItemProps) => (
-          <MenuItem
-            key={item.id}
-            id={item.id}
-            name={item.name}
-            price={item.price}
-            onEdit={() => router.push(`/update/${item.id}`)}
-            onDelete={handleDelete}
-          />
-        ))
-      ) : (
-        <Image
-          src={loadingGif}
-          alt="Loading"
-          width={100}
-          height={100}
-          className="mx-auto"
-        />
-      )}
+      <div className="my-4">
+        <ScrollArea className="h-[680px] w-full rounded-md border px-3 scroll-smooth">
+          {menuItems ? (
+            menuItems.map((item: MenuItemProps) => (
+              <MenuItem
+                key={item.id}
+                id={item.id}
+                name={item.name}
+                price={item.price}
+                onEdit={() => router.push(`/update/${item.id}`)}
+                onDelete={handleDelete}
+              />
+            ))
+          ) : (
+            <Image
+              src={loadingGif}
+              alt="Loading"
+              width={100}
+              height={100}
+              className="mx-auto"
+            />
+          )}
+        </ScrollArea>
+      </div>
     </div>
   );
 }
