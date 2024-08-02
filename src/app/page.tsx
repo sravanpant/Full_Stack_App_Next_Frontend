@@ -9,9 +9,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 
 const deleteMenu = async (id: number) => {
-  const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`, {
-    method: "DELETE",
-  });
+  const res = await fetch(
+    `https://randomextra23.pythonanywhere.com/api/menu/${id}/`,
+    {
+      method: "DELETE",
+    }
+  );
   if (!res.ok) {
     throw new Error("Failed to retrieve menu");
   }
@@ -19,7 +22,7 @@ const deleteMenu = async (id: number) => {
 };
 
 const getData = async () => {
-  const res = await fetch("http://127.0.0.1:8000/api/menu/");
+  const res = await fetch("https://randomextra23.pythonanywhere.com/api/menu/");
   if (!res.ok) {
     throw new Error("Failed to retrieve menu");
   }
@@ -83,6 +86,14 @@ export default function Home() {
     }
   };
 
+  // if (menuItems.length === 0) {
+  //   return (
+  //     <div className="h-[50%] w-[50%] border border-gray-400 flex justify-center items-center">
+  //       <span className="font-semibold text-4xl text-gray-800">Add Items</span>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="">
       <span className="flex items-center justify-center py-3 text-center font-bold text-4xl ">
@@ -101,28 +112,36 @@ export default function Home() {
         </p>
       )}
       <div className="my-4">
-        <ScrollArea className="h-[680px] w-full rounded-md border px-3 scroll-smooth">
-          {menuItems ? (
-            menuItems.map((item: MenuItemProps) => (
-              <MenuItem
-                key={item.id}
-                id={item.id}
-                name={item.name}
-                price={item.price}
-                onEdit={() => router.push(`/update/${item.id}`)}
-                onDelete={handleDelete}
+        {menuItems.length === 0 ? (
+          <div className="h-[680px] w-full rounded-md border border-gray-200 flex justify-center items-center">
+            <span className="font-medium text-2xl text-gray-500">
+              Add Items
+            </span>
+          </div>
+        ) : (
+          <ScrollArea className="h-[680px] w-full rounded-md border px-3 scroll-smooth">
+            {menuItems ? (
+              menuItems.map((item: MenuItemProps) => (
+                <MenuItem
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  price={item.price}
+                  onEdit={() => router.push(`/update/${item.id}`)}
+                  onDelete={handleDelete}
+                />
+              ))
+            ) : (
+              <Image
+                src={loadingGif}
+                alt="Loading"
+                width={100}
+                height={100}
+                className="mx-auto"
               />
-            ))
-          ) : (
-            <Image
-              src={loadingGif}
-              alt="Loading"
-              width={100}
-              height={100}
-              className="mx-auto"
-            />
-          )}
-        </ScrollArea>
+            )}
+          </ScrollArea>
+        )}
       </div>
     </div>
   );

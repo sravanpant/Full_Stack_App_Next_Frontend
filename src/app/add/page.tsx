@@ -25,13 +25,16 @@ const formSchema = z.object({
 });
 
 const createMenu = async (data: any) => {
-  const res = await fetch("http://127.0.0.1:8000/api/menu/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  const res = await fetch(
+    "https://randomextra23.pythonanywhere.com/api/menu/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to create menu");
