@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MenuItem, { MenuItemProps } from "@/components/MenuItem";
 import Image from "next/image";
@@ -86,16 +86,8 @@ export default function Home() {
     }
   };
 
-  // if (menuItems.length === 0) {
-  //   return (
-  //     <div className="h-[50%] w-[50%] border border-gray-400 flex justify-center items-center">
-  //       <span className="font-semibold text-4xl text-gray-800">Add Items</span>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <div className="">
+    <div>
       <span className="flex items-center justify-center py-3 text-center font-bold text-4xl ">
         Menu
       </span>
@@ -106,6 +98,7 @@ export default function Home() {
       >
         Add
       </Button>
+
       {displaySuccess.show && (
         <p className="text-[#008000]">
           {displaySuccess.type === "add" ? "Added a" : "Modified a"} menu item.
