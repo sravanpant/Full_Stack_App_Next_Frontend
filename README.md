@@ -40,7 +40,7 @@ This is a Menu Management Application built using ReactJS, TailwindCSS and NextJ
 
    ```sh
    git clone https://github.com/sravanpant/Full_Stack_App_Next_Frontend
-   cd menu-app
+   cd Full_Stack_App_Next_Frontend
    ```
 
 2. Install dependencies:
